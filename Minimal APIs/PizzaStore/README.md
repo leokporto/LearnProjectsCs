@@ -12,7 +12,7 @@ Also, Extension methods were created to help on the organization of Program.cs f
 
 The TODO list for this project:
 
-- [ ] Add responses for all operations (Ok, BadRequest...)
+- [x] Add responses for all operations (Ok, BadRequest...)
 - [ ] Handle errors
 - [ ] Add logging
 - [ ] Add Authenthication and authorization
