@@ -1,6 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using PizzaStore.Data;
+using PizzaStore.Services;
 
 public static class ServicesExtensions
 {
@@ -23,5 +24,11 @@ public static class ServicesExtensions
         return builder;
     }
 
+    public static WebApplicationBuilder AddIOCServices(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddTransient<TokenService>();
+
+		return builder;
+	}
     
 }
