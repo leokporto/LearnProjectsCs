@@ -50,8 +50,14 @@
     <Compile Include="Events\LicenseEvents\LicenseSubstituted.cs" />
     <Compile Include="Events\LicenseEvents\LicenseUpdated.cs" />
     <Compile Include="Events\LicenseEvents\Project.cs" />
+    <Compile Include="Events\StudentEvents\StudentCreated.cs" />
+    <Compile Include="Events\StudentEvents\StudentEnrolled.cs" />
+    <Compile Include="Events\StudentEvents\StudentUnEnrolled.cs" />
+    <Compile Include="Events\StudentEvents\StudentUpdated.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Student.cs" />
+    <Compile Include="StudentDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
