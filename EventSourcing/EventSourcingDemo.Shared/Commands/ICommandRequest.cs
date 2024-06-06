@@ -1,6 +1,6 @@
 ﻿namespace EventSourcingDemo.Shared.Commands
 {
-	public interface ICommand
+	public interface ICommandRequest
 	{
 	}
 }

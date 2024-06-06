@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventSourcingDemo.Staff.Domain.Commands
 {
-	public class AddEmployeeCommand : ICommand
+	public class AddEmployeeCommand : ICommandRequest
 	{
 		/// <summary>
 		/// Gets or sets the employee ID.

@@ -7,15 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcing", "EventSourc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{AC371B25-ED7D-4CA8-B20A-74E6A3623914}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingDemo.Shared", "..\EventSourcingDemo.Shared\EventSourcingDemo.Shared.csproj", "{85DE2D54-3D6E-4880-8D11-99F81C3EEDB7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingDemo.Shared", ".\EventSourcingDemo.Shared\EventSourcingDemo.Shared.csproj", "{85DE2D54-3D6E-4880-8D11-99F81C3EEDB7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Staff.Domain", "Staff.Domain", "{1AA6D929-FD64-4E9C-B6EC-1AEEB8303C37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingDemo.Staff.Domain", "..\EventSourcingDemo.Staff.Domain\EventSourcingDemo.Staff.Domain.csproj", "{C35620E4-2199-4FCD-8BBC-8ACF23FA5EA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingDemo.Staff.Domain", ".\EventSourcingDemo.Staff.Domain\EventSourcingDemo.Staff.Domain.csproj", "{C35620E4-2199-4FCD-8BBC-8ACF23FA5EA0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Staff.Infra", "Staff.Infra", "{8E0D8C5E-7760-48D4-8A8E-146567CD99BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingDemo.Staff.Infra", "..\EventSourcingDemo.Staff.Infra\EventSourcingDemo.Staff.Infra.csproj", "{395AB81C-CDDB-4BC4-BDD0-B4CEA921FADB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingDemo.Staff.Infra", ".\EventSourcingDemo.Staff.Infra\EventSourcingDemo.Staff.Infra.csproj", "{395AB81C-CDDB-4BC4-BDD0-B4CEA921FADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
