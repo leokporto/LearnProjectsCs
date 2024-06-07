@@ -6,16 +6,20 @@ namespace EventSourcingDemo.Staff.Domain.Entities
 {
 	public class Employee : IAggregateRoot
 	{
+		public Employee() 
+		{ 
+		
+		}
+
 		public Employee(string fullName, string email, DateTime dateOfBirth)
 		{
-			Id = Guid.NewGuid();
 			FullName = fullName;
 			Email = email;
 			DateOfBirth = dateOfBirth;
 		}
 
 
-		public Guid Id { get; }
+		public Guid Id { get; private set; }
 
 		public string FullName { get; private set; }
 
@@ -29,6 +33,7 @@ namespace EventSourcingDemo.Staff.Domain.Entities
 
 		private void Apply(EmployeeAddedEvent employeeHired)
 		{
+			Id = employeeHired.EmployeeId;
 			FullName = employeeHired.FullName;
 			DateOfBirth = employeeHired.DateOfBirth;
 			IsActive = employeeHired.IsActive;

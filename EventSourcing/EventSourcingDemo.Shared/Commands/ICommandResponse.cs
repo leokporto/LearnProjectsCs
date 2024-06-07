@@ -1,9 +1,9 @@
-﻿namespace EventSourcingDemo.Shared.Commands
-{
-	public interface ICommandResponse
-	{
-		bool Status { get; }
+﻿using EventSourcingDemo.Shared.Contracts;
 
-		string Message { get; }
+namespace EventSourcingDemo.Shared.Commands
+{
+    public interface ICommandResponse : IStatusResponse
+	{
+	
 	}
 }

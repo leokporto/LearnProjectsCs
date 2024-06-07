@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EventSourcingDemo.Shared\EventSourcingDemo.Shared.csproj" />
     <ProjectReference Include="..\EventSourcingDemo.Staff.Domain\EventSourcingDemo.Staff.Domain.csproj" />
+    <ProjectReference Include="..\EventSourcingDemo.Staff.Infra\EventSourcingDemo.Staff.Infra.csproj" />
   </ItemGroup>
 
 </Project>
