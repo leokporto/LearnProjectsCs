@@ -1,1 +1,0 @@
-﻿record CreateUserRequest(string FirstName, string LastName, bool Internal);

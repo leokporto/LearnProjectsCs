@@ -1,6 +1,0 @@
-@EventSourcingDemo.Staff.API_HostAddress = http://localhost:5152
-
-GET {{EventSourcingDemo.Staff.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
