@@ -1,5 +1,8 @@
-using BlazorSrvWAdIdentity.Client.Pages;
 using BlazorSrvWAdIdentity.Components;
+using BlazorSrvWAdIdentity.Data;
+using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorSrvWAdIdentity;
 
@@ -13,6 +16,20 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
+
+        builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+        {
+            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+        });
+
+        builder.Services.AddDefaultIdentity<ApplicationUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<AppIdentityDbContext>();
+
+        builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+            .AddNegotiate(); // Permite login via Windows Authentication
+
+        builder.Services.AddAuthorization();
 
         var app = builder.Build();
 
