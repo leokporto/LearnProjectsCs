@@ -18,6 +18,10 @@ namespace UserImporter
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
 
+
+            
+
+
             var adService = services.GetRequiredService<ActiveDirectoryService>();
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
@@ -78,8 +82,9 @@ namespace UserImporter
                     services.AddDbContext<AppIdentityDbContext>(options =>
                         options.UseSqlite("Data Source=C:\\Temp\\TestIdentity.db"));
 
-                    services.AddIdentity<IdentityUser, IdentityRole>()
-                        .AddEntityFrameworkStores<AppIdentityDbContext>();
+                    services.AddDefaultIdentity<ApplicationUser>()
+                            .AddRoles<IdentityRole>()
+                            .AddEntityFrameworkStores<AppIdentityDbContext>();
 
                     services.AddSingleton(new ActiveDirectoryService("SPINENGENHARIA"));
                 });

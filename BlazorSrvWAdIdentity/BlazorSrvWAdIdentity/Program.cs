@@ -77,6 +77,12 @@ public class Program
             return httpContext.User.Identity?.Name ?? "Usuário não autenticado";
         }).RequireAuthorization();
 
+        //app.MapGet("/syncad", async (AdUserManager adUserManager) =>
+        //{
+        //    await adUserManager.SyncAdUsers();
+        //    return "Sincronização concluída";
+        //}).RequireAuthorization();
+
 
         app.Run();
     }
