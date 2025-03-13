@@ -50,7 +50,7 @@ namespace UserImporter
                     if (result.Succeeded)
                     {
                         Console.WriteLine($"Usuário {fullUserName} criado.");
-                        await userManager.AddToRoleAsync(user, aduser.Role);
+                        var profileRes = await userManager.AddToRoleAsync(user, aduser.Role);
                     }
                     else
                     {
@@ -85,6 +85,12 @@ namespace UserImporter
                     services.AddDefaultIdentity<ApplicationUser>()
                             .AddRoles<IdentityRole>()
                             .AddEntityFrameworkStores<AppIdentityDbContext>();
+
+                    services.Configure<IdentityOptions>(options =>
+                    {
+                        options.User.RequireUniqueEmail = false;
+                        options.User.AllowedUserNameCharacters += @"\";
+                    });
 
                     services.AddSingleton(new ActiveDirectoryService("SPINENGENHARIA"));
                 });
