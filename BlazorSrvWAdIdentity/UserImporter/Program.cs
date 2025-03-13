@@ -19,7 +19,7 @@ namespace UserImporter
             var services = scope.ServiceProvider;
 
             var adService = services.GetRequiredService<ActiveDirectoryService>();
-            var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
             // Criar roles se não existirem
@@ -28,23 +28,25 @@ namespace UserImporter
 
         }
 
-        private static async Task SyncAdUsers(ActiveDirectoryService adService, UserManager<IdentityUser> userManager)
+        private static async Task SyncAdUsers(ActiveDirectoryService adService, UserManager<ApplicationUser> userManager)
         {
             var users = adService.GetActiveUsers();
 
-            foreach (var username in users)
+            foreach (var aduser in users)
             {
-                var fullUserName = "SPINENGENHARIA\\" + username;
+                var fullUserName = "SPINENGENHARIA\\" + aduser.Username;
                 var user = await userManager.FindByNameAsync(fullUserName);
 
                 if (user == null)
                 {
-                    user = new IdentityUser { UserName = fullUserName };
-                    var result = await userManager.CreateAsync(user);
+                    user = new ApplicationUser { UserName = fullUserName,  Email = aduser.Email };
+                    
+                    var result = await userManager.CreateAsync((ApplicationUser)user);
 
                     if (result.Succeeded)
                     {
                         Console.WriteLine($"Usuário {fullUserName} criado.");
+                        await userManager.AddToRoleAsync(user, aduser.Role);
                     }
                     else
                     {

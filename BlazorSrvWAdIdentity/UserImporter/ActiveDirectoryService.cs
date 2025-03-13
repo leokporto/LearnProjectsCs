@@ -36,11 +36,22 @@ namespace UserImporter
                             continue;
 
                         //TODO: Fazer a atribuicao do role aos usuarios
+                        string role = "Usuario";
+
+                        if(string.Equals(user.SamAccountName, "leonardo.porto", StringComparison.CurrentCultureIgnoreCase) ||
+                            string.Equals(user.SamAccountName, "guilherme.tavares", StringComparison.CurrentCultureIgnoreCase))
+                            role = "Administrador";
+
+                        if (string.Equals(user.SamAccountName, "erica.lira", StringComparison.CurrentCultureIgnoreCase) ||
+                            string.Equals(user.SamAccountName, "erika.gomes", StringComparison.CurrentCultureIgnoreCase) ||
+                            string.Equals(user.SamAccountName, "danielle.ribeiro", StringComparison.CurrentCultureIgnoreCase))
+                            role = "Licenciador";
 
                         users.Add(new SpinTrackUser()
                         { 
                             Username = user.SamAccountName,
                             Email = user.EmailAddress,
+                            Role = role
                         }); // Retorna "usuario", sem "DOMINIO\"
                     }
                 }
