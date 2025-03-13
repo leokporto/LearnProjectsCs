@@ -1,6 +1,9 @@
+using BlazorSrvWAdIdentity.Biz;
 using BlazorSrvWAdIdentity.Components;
 using BlazorSrvWAdIdentity.Data;
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,10 +29,25 @@ public class Program
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
 
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            options.User.RequireUniqueEmail = false;
+            options.User.AllowedUserNameCharacters += @"\";
+        });
+
         builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             .AddNegotiate(); // Permite login via Windows Authentication
 
-        builder.Services.AddAuthorization();
+        builder.Services.AddCascadingAuthenticationState(); // Permite que o Blazor acesse a autenticação
+        builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = options.DefaultPolicy; // Garante que todas as páginas exigem autenticação
+        });
+
+        builder.Services.AddScoped<AdUserManager>();
 
         var app = builder.Build();
 
@@ -52,8 +70,13 @@ public class Program
 
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode()
-            .AddInteractiveWebAssemblyRenderMode()
-            .AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
+            .AddInteractiveWebAssemblyRenderMode();
+
+        app.MapGet("/whois", (HttpContext httpContext) =>
+        {
+            return httpContext.User.Identity?.Name ?? "Usuário não autenticado";
+        }).RequireAuthorization();
+
 
         app.Run();
     }

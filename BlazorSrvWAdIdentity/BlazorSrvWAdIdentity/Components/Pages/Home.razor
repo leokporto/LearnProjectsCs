@@ -1,7 +1,39 @@
-﻿@page "/"
+﻿@inject Biz.AdUserManager AdUserManager
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+
+@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<br />
+
+<h3>Usuário Logado:</h3>
+
+@if (authState is not null)
+{
+    <p>@authState.User.Identity?.Name</p>
+}
+else
+{
+    <p>Nenhum usuário autenticado</p>
+}
+
+@code {
+
+    private AuthenticationState? authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        
+        if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
+        {
+            await AdUserManager.EnsureUserExists(authState.User);
+        }
+    }
+}

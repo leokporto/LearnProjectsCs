@@ -17,7 +17,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.3" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="3.8.0" />
-    <ProjectReference Include="..\BlazorSrvWAdIdentity.Client\BlazorSrvWAdIdentity.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.13" />
   </ItemGroup>
 
