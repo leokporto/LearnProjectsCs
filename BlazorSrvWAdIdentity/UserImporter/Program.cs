@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserImporter;
 using BlazorSrvWAdIdentity.Data;
+using BlazorSrvWAdIdentity.Auth;
 
 
 namespace UserImporter

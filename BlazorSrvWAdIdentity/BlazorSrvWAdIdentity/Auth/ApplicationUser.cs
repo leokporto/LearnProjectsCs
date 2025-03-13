@@ -2,7 +2,7 @@
 
 
 
-namespace BlazorSrvWAdIdentity.Data
+namespace BlazorSrvWAdIdentity.Auth
 {
     public class ApplicationUser : IdentityUser
     {

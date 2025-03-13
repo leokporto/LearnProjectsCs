@@ -1,11 +1,15 @@
+using BlazorSrvWAdIdentity.Auth;
 using BlazorSrvWAdIdentity.Biz;
 using BlazorSrvWAdIdentity.Components;
 using BlazorSrvWAdIdentity.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System.Security.Claims;
 
 namespace BlazorSrvWAdIdentity;
 
@@ -27,12 +31,16 @@ public class Program
 
         builder.Services.AddDefaultIdentity<ApplicationUser>()
             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<AppIdentityDbContext>();
+            .AddEntityFrameworkStores<AppIdentityDbContext>()
+            .AddDefaultTokenProviders();
+
+        //builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 
         builder.Services.Configure<IdentityOptions>(options =>
         {
             options.User.RequireUniqueEmail = false;
             options.User.AllowedUserNameCharacters += @"\";
+            options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
         });
 
         builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
@@ -40,14 +48,19 @@ public class Program
 
         builder.Services.AddCascadingAuthenticationState(); // Permite que o Blazor acesse a autenticação
         builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+        
+        builder.Services.AddScoped<IClaimsTransformation, CustomClaimsTransformation>();
 
 
         builder.Services.AddAuthorization(options =>
         {
             options.FallbackPolicy = options.DefaultPolicy; // Garante que todas as páginas exigem autenticação
+
         });
 
         builder.Services.AddScoped<AdUserManager>();
+        
+
 
         var app = builder.Build();
 

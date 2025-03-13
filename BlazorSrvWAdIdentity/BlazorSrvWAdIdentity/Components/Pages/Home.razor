@@ -1,8 +1,13 @@
 ﻿@inject Biz.AdUserManager AdUserManager
 @inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
 
 @page "/"
+@using BlazorSrvWAdIdentity.Auth
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
 
 <PageTitle>Home</PageTitle>
 
@@ -17,6 +22,16 @@ Welcome to your new app.
 @if (authState is not null)
 {
     <p>@authState.User.Identity?.Name</p>
+
+    <AuthorizeView>
+        <p>Usuário autenticado: @context.User.Identity.Name</p>
+        <p>Está autenticado? @context.User.Identity.IsAuthenticated</p>
+        <p>Roles do usuário: @string.Join(", ", @context.User.Claims.Where(c => c.Type == "role").Select(c => c.Value))</p>
+        <p>Está no administrador? @authState.User.IsInRole("ADMINISTRADOR")</p>
+        <p>Roles disponiveis: @string.Join(", ", RoleManager.Roles.Select(c => c.Name))</p>
+    </AuthorizeView>
+
+    
 }
 else
 {
@@ -30,10 +45,68 @@ else
     protected override async Task OnInitializedAsync()
     {
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        
+
         if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
         {
-            await AdUserManager.EnsureUserExists(authState.User);
+            var user = await UserManager.GetUserAsync(authState.User);
+            // await SignInManager.SignOutAsync();
+            // await SignInManager.SignInAsync(user, isPersistent: false);
+
+            //await AdUserManager.EnsureUserExists(authState.User);
+
+            //authState.User.IsInRole("ADMINISTRADOR");
         }
+    }
+
+    private async Task CheckRoles()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var appUser = await UserManager.GetUserAsync(user);
+            var roles = await UserManager.GetRolesAsync(appUser);
+
+            Console.WriteLine($"Usuário: {appUser?.UserName}");
+            Console.WriteLine($"Roles: {string.Join(", ", roles)}");
+        }
+        else
+        {
+            Console.WriteLine("Usuário não autenticado.");
+        }
+    }
+
+    private async Task VerificarUsuario()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        Console.WriteLine($"Usuário autenticado: {user.Identity?.Name}");
+        Console.WriteLine($"Autenticado: {user.Identity?.IsAuthenticated}");
+
+        foreach (var claim in user.Claims)
+        {
+            Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
+        }
+    }
+
+    private async Task VerificarUsuario2()
+    {
+        var userName = authState.User.Identity?.Name;
+        var appUser = await UserManager.FindByNameAsync(userName);
+
+        if (appUser == null)
+        {
+            Console.WriteLine("Usuário não encontrado no banco!");
+        }
+        else
+        {
+            var roles = await UserManager.GetRolesAsync(appUser);
+            Console.WriteLine($"Usuário: {appUser.UserName}");
+            Console.WriteLine($"Roles no banco: {string.Join(", ", roles)}");
+        }
+
+
     }
 }

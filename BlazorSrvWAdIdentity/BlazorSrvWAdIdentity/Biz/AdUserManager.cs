@@ -1,4 +1,4 @@
-﻿using BlazorSrvWAdIdentity.Data;
+﻿using BlazorSrvWAdIdentity.Auth;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace BlazorSrvWAdIdentity.Biz
         {
             var username = principal.Identity?.Name; // "DOMINIO\\usuario"
             
-            var email = $"{username.Split('\\').Last()}@spinengenharia.com.br"; // Exemplo de email baseado no login
+            
 
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
@@ -33,8 +33,13 @@ namespace BlazorSrvWAdIdentity.Biz
                 var result = await _userManager.CreateAsync(user);
 
             }
+            //else if (string.Equals(user.UserName, "NARDOPESSOAL\\leokporto", StringComparison.CurrentCultureIgnoreCase))
+            //{
+            //    var profileRes = await _userManager.AddToRoleAsync(user, "Administrador");
+            //}
 
-            return user;
+
+                return user;
         }
     }
 }
