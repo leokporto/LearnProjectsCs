@@ -3,6 +3,7 @@ using BlazorSrvWAdIdentity.Biz;
 using BlazorSrvWAdIdentity.Components;
 using BlazorSrvWAdIdentity.Data;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
@@ -24,43 +25,43 @@ public class Program
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
-        builder.Services.AddDbContext<AppIdentityDbContext>(options =>
-        {
-            options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-        });
+        //builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+        //{
+        //    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+        //});
 
-        builder.Services.AddDefaultIdentity<ApplicationUser>()
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<AppIdentityDbContext>()
-            .AddDefaultTokenProviders();
+        //builder.Services.AddDefaultIdentity<ApplicationUser>()
+        //    .AddRoles<IdentityRole>()
+        //    .AddEntityFrameworkStores<AppIdentityDbContext>()
+        //    .AddDefaultTokenProviders();
 
-        //builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
+        
 
-        builder.Services.Configure<IdentityOptions>(options =>
-        {
-            options.User.RequireUniqueEmail = false;
-            options.User.AllowedUserNameCharacters += @"\";
-            options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
-        });
+        //builder.Services.Configure<IdentityOptions>(options =>
+        //{
+        //    options.User.RequireUniqueEmail = false;
+        //    options.User.AllowedUserNameCharacters += @"\";
+        //    options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
+        //    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+        //    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Name;
+        //});
 
         builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             .AddNegotiate(); // Permite login via Windows Authentication
 
         builder.Services.AddCascadingAuthenticationState(); // Permite que o Blazor acesse a autenticação
-        builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
         
-        builder.Services.AddScoped<IClaimsTransformation, CustomClaimsTransformation>();
+        builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();        
+        //builder.Services.AddScoped<IClaimsTransformation, CustomClaimsTransformation>();
+        //builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 
-
-        builder.Services.AddAuthorization(options =>
-        {
-            options.FallbackPolicy = options.DefaultPolicy; // Garante que todas as páginas exigem autenticação
-
+        builder.Services.AddAuthorization(options => { 
+            options.FallbackPolicy = options.DefaultPolicy;
         });
 
-        builder.Services.AddScoped<AdUserManager>();
-        
+        //builder.Services.AddScoped<AdUserManager>();
 
+        
 
         var app = builder.Build();
 
@@ -81,6 +82,8 @@ public class Program
         app.UseStaticFiles();
         app.UseAntiforgery();
 
+       
+
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode()
             .AddInteractiveWebAssemblyRenderMode();
@@ -96,6 +99,8 @@ public class Program
         //    return "Sincronização concluída";
         //}).RequireAuthorization();
 
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.Run();
     }
