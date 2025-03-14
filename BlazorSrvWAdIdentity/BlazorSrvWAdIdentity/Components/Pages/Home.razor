@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
 @using System.Security.Claims
+@using System.Security.Principal
 
 <PageTitle>Home</PageTitle>
 
@@ -31,24 +32,25 @@ Welcome to your new app.
                     <tr>
                         <th>Type</th>
                         <th>Value</th>
-                        <th>Subject</th>
+                        <th>AD Name</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var claim in VerificarUsuario().Result)
-                {
-                    <tr>
-                        <td>@(claim.Type)</td>
-                        <td>@(claim.Value)</td>
-                        <td>@(claim.Subject)</td>
-                    </tr>
-                }
+                    @foreach (var claim in VerificarUsuario().Result)
+                    {
+
+                        <tr>
+                            <td>@(claim.Type)</td>
+                            <td>@(claim.Value)</td>
+                            <td>@GetAdGroupName(claim)</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </p>
     </AuthorizeView>
 
-    
+
 }
 else
 {
@@ -58,6 +60,20 @@ else
 @code {
 
     private AuthenticationState? authState;
+
+    private string GetAdGroupName(Claim claim)
+    {
+        if (claim == null)
+            return "";
+
+        if (claim.Type.Contains("name"))
+            return claim.Value;
+
+        var sid = new SecurityIdentifier(claim.Value);
+        var ntAccount = (NTAccount)sid.Translate(typeof(NTAccount));
+        string SidValue = ntAccount.Value;
+        return SidValue;
+    }
 
     protected override async Task OnInitializedAsync()
     {
