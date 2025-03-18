@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+
 using BlazorSrvWAdIdentity.Auth;
 using BlazorSrvWAdIdentity.Biz;
 using BlazorSrvWAdIdentity.Components;
 using BlazorSrvWAdIdentity.Data;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
@@ -25,41 +27,45 @@ public class Program
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
-        //builder.Services.AddDbContext<AppIdentityDbContext>(options =>
-        //{
-        //    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-        //});
-
-        //builder.Services.AddDefaultIdentity<ApplicationUser>()
-        //    .AddRoles<IdentityRole>()
-        //    .AddEntityFrameworkStores<AppIdentityDbContext>()
-        //    .AddDefaultTokenProviders();
-
         
 
-        //builder.Services.Configure<IdentityOptions>(options =>
-        //{
-        //    options.User.RequireUniqueEmail = false;
-        //    options.User.AllowedUserNameCharacters += @"\";
-        //    options.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
-        //    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-        //    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Name;
-        //});
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+        })
+        .AddCookie()
+        .AddOpenIdConnect(options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.Authority = $"https://login.microsoftonline.com/{builder.Configuration["AzureAd:TenantId"]}";
+                options.ClientId = builder.Configuration["AzureAd:ClientId"];
+                options.ClientSecret = builder.Configuration["AzureAd:ClientSecret"];                    
+                options.ResponseType = "code"; // Utiliza o fluxo Authorization Code
 
-        builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-            .AddNegotiate(); // Permite login via Windows Authentication
+                // Escopos solicitados
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+
+                // Salvar tokens para uso posterior, se necessário
+                options.SaveTokens = true;
+
+                // Tratamento de erro na autenticação
+                options.Events.OnAuthenticationFailed = context =>
+                {
+                    context.HandleResponse();
+                    context.Response.Redirect("/erro-autenticacao");
+                    return Task.CompletedTask;
+                };
+            }); // Permite login via Windows Authentication
 
         builder.Services.AddCascadingAuthenticationState(); // Permite que o Blazor acesse a autenticação
         
         builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();        
-        //builder.Services.AddScoped<IClaimsTransformation, CustomClaimsTransformation>();
-        //builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
-
-        builder.Services.AddAuthorization(options => { 
-            options.FallbackPolicy = options.DefaultPolicy;
-        });
-
-        //builder.Services.AddScoped<AdUserManager>();
+        
+        builder.Services.AddAuthorization();
 
         
 
@@ -93,11 +99,6 @@ public class Program
             return httpContext.User.Identity?.Name ?? "Usuário não autenticado";
         }).RequireAuthorization();
 
-        //app.MapGet("/syncad", async (AdUserManager adUserManager) =>
-        //{
-        //    await adUserManager.SyncAdUsers();
-        //    return "Sincronização concluída";
-        //}).RequireAuthorization();
 
         app.UseAuthentication();
         app.UseAuthorization();
