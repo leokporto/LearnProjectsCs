@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
+using Microsoft.Extensions.Options;
 
 namespace BlazorSrvWAdIdentity;
 
@@ -27,7 +28,7 @@ public class Program
             .AddInteractiveServerComponents()
             .AddInteractiveWebAssemblyComponents();
 
-        
+
 
         builder.Services.AddAuthentication(options =>
         {
@@ -40,7 +41,7 @@ public class Program
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.Authority = $"https://login.microsoftonline.com/{builder.Configuration["AzureAd:TenantId"]}";
                 options.ClientId = builder.Configuration["AzureAd:ClientId"];
-                options.ClientSecret = builder.Configuration["AzureAd:ClientSecret"];                    
+                options.ClientSecret = builder.Configuration["AzureAd:ClientSecret"];
                 options.ResponseType = "code"; // Utiliza o fluxo Authorization Code
 
                 // Escopos solicitados
@@ -62,12 +63,12 @@ public class Program
             }); // Permite login via Windows Authentication
 
         builder.Services.AddCascadingAuthenticationState(); // Permite que o Blazor acesse a autenticação
-        
-        builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();        
-        
+
+        builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+
         builder.Services.AddAuthorization();
 
-        
+
 
         var app = builder.Build();
 
@@ -96,8 +97,12 @@ public class Program
 
         app.MapGet("/whois", (HttpContext httpContext) =>
         {
-            return httpContext.User.Identity?.Name ?? "Usuário não autenticado";
-        }).RequireAuthorization();
+            string response = $"Tenant: {builder.Configuration["AzureAd:TenantId"]}\n";
+            response += $"Client Id: {builder.Configuration["AzureAd:ClientId"]}\n";
+            response += $"Client Secret: {builder.Configuration["AzureAd:ClientSecret"]}\n";
+            
+            return response;
+        });
 
 
         app.UseAuthentication();
