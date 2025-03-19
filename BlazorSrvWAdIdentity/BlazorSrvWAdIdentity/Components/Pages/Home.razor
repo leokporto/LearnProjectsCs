@@ -24,7 +24,7 @@ Welcome to your new app.
     <AuthorizeView>
         <p>Usuário autenticado: @authState.User.Identity.Name</p>
         <p>Está autenticado? @authState.User.Identity.IsAuthenticated</p>
-        <p>Está no S-1-1-0? @authState.User.IsInRole("S-1-1-0")</p>
+        <p>Está no 	SPINENGENHARIA\GRP-SPINTRACK-ADMIN? @authState.User.IsInRole("S-1-5-21-3948068456-3201447862-1739703090-4114")</p>
         <p>
             Claims: <br />
             <table class="table table-striped table-hover">
@@ -32,17 +32,16 @@ Welcome to your new app.
                     <tr>
                         <th>Type</th>
                         <th>Value</th>
-                        <th>AD Name</th>
+                        <th>Identifier</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var claim in VerificarUsuario().Result)
                     {
-
                         <tr>
                             <td>@(claim.Type)</td>
                             <td>@(claim.Value)</td>
-                            <td>@GetAdGroupName(claim)</td>
+                            <td>@(GetClaimSid(claim))</td>
                         </tr>
                     }
                 </tbody>
@@ -61,12 +60,9 @@ else
 
     private AuthenticationState? authState;
 
-    private string GetAdGroupName(Claim claim)
+    private string GetClaimSid(Claim claim)
     {
-        if (claim == null)
-            return "";
-
-        if (claim.Type.Contains("name"))
+        if (claim.Type.Contains(@"claims/name", StringComparison.CurrentCultureIgnoreCase))
             return claim.Value;
 
         var sid = new SecurityIdentifier(claim.Value);
@@ -79,68 +75,19 @@ else
     {
         authState = await AuthStateProvider.GetAuthenticationStateAsync();
 
-        // if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
-        // {
-        //     var user = await UserManager.GetUserAsync(authState.User);
-        //     // await SignInManager.SignOutAsync();
-        //     // await SignInManager.SignInAsync(user, isPersistent: false);
-
-        //     //await AdUserManager.EnsureUserExists(authState.User);
-
-        //     //authState.User.IsInRole("ADMINISTRADOR");
-        // }
     }
 
-    // private async Task CheckRoles()
-    // {
-    //     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-    //     var user = authState.User;
-
-    //     if (user.Identity?.IsAuthenticated == true)
-    //     {
-    //         var appUser = await UserManager.GetUserAsync(user);
-    //         var roles = await UserManager.GetRolesAsync(appUser);
-
-    //         Console.WriteLine($"Usuário: {appUser?.UserName}");
-    //         Console.WriteLine($"Roles: {string.Join(", ", roles)}");
-    //     }
-    //     else
-    //     {
-    //         Console.WriteLine("Usuário não autenticado.");
-    //     }
-    // }
 
     private async Task<IEnumerable<Claim>> VerificarUsuario()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         Console.WriteLine($"Usuário autenticado: {user.Identity?.Name}");
         Console.WriteLine($"Autenticado: {user.Identity?.IsAuthenticated}");
 
         return user.Claims;
-        // foreach (var claim in user.Claims)
-        // {
-        //     Console.WriteLine($"Claim: {claim.Type} - {claim.Value}");
-        // }
+        
     }
 
-    // private async Task VerificarUsuario2()
-    // {
-    //     var userName = authState.User.Identity?.Name;
-    //     var appUser = await UserManager.FindByNameAsync(userName);
-
-    //     if (appUser == null)
-    //     {
-    //         Console.WriteLine("Usuário não encontrado no banco!");
-    //     }
-    //     else
-    //     {
-    //         var roles = await UserManager.GetRolesAsync(appUser);
-    //         Console.WriteLine($"Usuário: {appUser.UserName}");
-    //         Console.WriteLine($"Roles no banco: {string.Join(", ", roles)}");
-    //     }
-
-
-    // }
+    
 }
